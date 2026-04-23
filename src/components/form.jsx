@@ -135,7 +135,7 @@ export default function HeroWithForm() {
       name: formData.name,
       phone: formData.phone,
       email: "N/A",
-      message: "Our team will contact you to discuss location, timing & purpose.",
+      message: "New demo booking received. Please contact this person to discuss location, timing & purpose of yoga.",
     };
 
     emailjs

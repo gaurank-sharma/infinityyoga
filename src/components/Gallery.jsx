@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
@@ -39,6 +39,21 @@ const galleryImages = [
 
 const GallerySlider = ({ label, images, onSelect }) => {
   const scrollRef = useRef(null);
+  const [fitsWithoutScroll, setFitsWithoutScroll] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const checkFit = () => {
+      setFitsWithoutScroll(el.scrollWidth <= el.clientWidth + 1);
+    };
+
+    checkFit();
+    const observer = new ResizeObserver(checkFit);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [images]);
 
   const scroll = (dir) => {
     const el = scrollRef.current;
@@ -52,7 +67,7 @@ const GallerySlider = ({ label, images, onSelect }) => {
         {label}
       </h3>
       <div className="relative group/slider">
-        {images.length > 1 && (
+        {!fitsWithoutScroll && (
           <>
             <button
               onClick={() => scroll(-1)}
@@ -73,7 +88,9 @@ const GallerySlider = ({ label, images, onSelect }) => {
 
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className={`flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden ${
+            fitsWithoutScroll ? "justify-center" : "justify-start"
+          }`}
         >
           {images.map((image) => (
             <motion.div

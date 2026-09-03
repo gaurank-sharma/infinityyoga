@@ -21,8 +21,11 @@ const YogaBookingForm = () => {
     }));
   };
 
+  const [status, setStatus] = useState("idle"); // idle | sending | success | error
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setStatus("sending");
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/enquiry`, {
@@ -33,7 +36,7 @@ const YogaBookingForm = () => {
 
       if (!response.ok) throw new Error("Request failed");
 
-      alert("Booking submitted successfully!");
+      setStatus("success");
       setFormData({
         name: "",
         phone: "",
@@ -45,7 +48,7 @@ const YogaBookingForm = () => {
         message: "",
       });
     } catch (error) {
-      alert("Something went wrong. Please try again.");
+      setStatus("error");
       console.error(error);
     }
   };
@@ -176,11 +179,23 @@ const YogaBookingForm = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="w-full bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 rounded-lg transition-all"
+              disabled={status === "sending"}
+              className="w-full bg-blue-800 hover:bg-blue-900 text-white font-semibold py-3 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Submit Booking
+              {status === "sending" ? "Submitting..." : "Submit Booking"}
             </button>
           </div>
+
+          {status === "success" && (
+            <p className="text-center text-green-600 text-sm">
+              Thank you! We've received your booking and will contact you shortly.
+            </p>
+          )}
+          {status === "error" && (
+            <p className="text-center text-red-600 text-sm">
+              Something went wrong. Please try again.
+            </p>
+          )}
         </form>
       </div>
     </div>

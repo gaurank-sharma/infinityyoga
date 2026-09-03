@@ -124,9 +124,11 @@ export default function HeroWithForm() {
     phone: "",
     email: "",
   });
+  const [status, setStatus] = useState("idle"); // idle | sending | success | error
 
   const onFormSubmit = async (e) => {
     e.preventDefault();
+    setStatus("sending");
 
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/enquiry`, {
@@ -142,10 +144,10 @@ export default function HeroWithForm() {
 
       if (!response.ok) throw new Error("Request failed");
 
-      alert("Message sent successfully!");
+      setStatus("success");
       setFormData({ name: "", phone: "", email: "" });
     } catch (error) {
-      alert("Failed to send the message. Please try again.");
+      setStatus("error");
       console.error("Enquiry submit error:", error);
     }
   };
@@ -203,12 +205,24 @@ export default function HeroWithForm() {
               />
               <button
                 type="submit"
-                className="bg-yellow-500 text-white font-semibold px-6 py-3 rounded-r-full text-sm hover:bg-yellow-600 transition whitespace-nowrap"
+                disabled={status === "sending"}
+                className="bg-yellow-500 text-white font-semibold px-6 py-3 rounded-r-full text-sm hover:bg-yellow-600 transition whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                BOOK NOW
+                {status === "sending" ? "SENDING..." : "BOOK NOW"}
               </button>
             </div>
           </form>
+
+          {status === "success" && (
+            <p className="text-center text-green-400 text-sm mt-4">
+              Thank you! We've received your request and will contact you shortly.
+            </p>
+          )}
+          {status === "error" && (
+            <p className="text-center text-red-400 text-sm mt-4">
+              Something went wrong. Please try again.
+            </p>
+          )}
 
           <p className="text-center text-blue-300 text-xs mt-4 opacity-70">
             🔒 Your information is safe with us. No spam, ever.

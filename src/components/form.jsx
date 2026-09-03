@@ -122,6 +122,7 @@ export default function HeroWithForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    email: "",
   });
 
   const onFormSubmit = async (e) => {
@@ -134,6 +135,7 @@ export default function HeroWithForm() {
         body: JSON.stringify({
           name: formData.name,
           phone: formData.phone,
+          email: formData.email || undefined,
           message: "New demo booking received. Please contact this person to discuss location, timing & purpose of yoga.",
         }),
       });
@@ -141,7 +143,7 @@ export default function HeroWithForm() {
       if (!response.ok) throw new Error("Request failed");
 
       alert("Message sent successfully!");
-      setFormData({ name: "", phone: "" });
+      setFormData({ name: "", phone: "", email: "" });
     } catch (error) {
       alert("Failed to send the message. Please try again.");
       console.error("Enquiry submit error:", error);
@@ -164,7 +166,7 @@ export default function HeroWithForm() {
             Book a Free Demo
           </h2>
           <p className="text-center text-yellow-400 text-xs mb-4 tracking-wide">
-            ✦ Just your name & number — we'll handle the rest ✦
+            ✦ Just your name & number — email is optional ✦
           </p>
 
           <form
@@ -179,6 +181,14 @@ export default function HeroWithForm() {
               onChange={handleInputChange}
               placeholder="Your Name"
               required
+              className="px-5 py-3 rounded-full w-full md:w-[35%] text-sm focus:outline-none"
+            />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Email (optional)"
               className="px-5 py-3 rounded-full w-full md:w-[35%] text-sm focus:outline-none"
             />
             <div className="flex w-full md:w-[50%]">
